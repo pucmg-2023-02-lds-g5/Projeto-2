@@ -54,4 +54,6 @@ Como um agente, desejo ser capaz de modificar um pedido de aluguel existente fei
 
 # Diagrama de Classes
 
+![diagrama_de_classes_lab2 drawio](https://github.com/pucmg-2023-02-lds-g5/Projeto-2/assets/99293679/812967aa-6894-494d-9981-fc69a6eea856)
+
 # Diagrama de Pacotes
