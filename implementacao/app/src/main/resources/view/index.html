@@ -1,0 +1,293 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pagina principal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" ></script>
+
+<div class="d-flex justify-content-center">
+    <div class="spinner-border" role="status" id="loading">
+    </div>
+</div>
+
+<p class="h1 text-center">Clientes Cadastrados</p>
+<table class="table table-hover">
+    <tbody id="usuarios"></tbody>
+</table>
+
+<p class="h1 text-center">Agentes Cadastrados</p>
+<table class="table table-hover">
+    <tbody id="agentes"></tbody>
+</table>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Registro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editAgentId">
+                <input type="text" id="editName" class="form-control" placeholder="Novo Nome">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveChanges">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="modal fade" id="editModalCliente" tabindex="-1" aria-labelledby="editModalLabelCliente" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabelCliente">Editar Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editClienteId">
+                    <input type="text" id="editClienteName" class="form-control" placeholder="Novo Nome do Cliente">
+                    <input type="text" id="editClienteRG" class="form-control" placeholder="Novo RG do Cliente">
+                    <input type="text" id="editClienteCPF" class="form-control" placeholder="Novo CPF do Cliente">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveClienteChanges">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const url = "http://localhost:8080/cliente";
+    const url2 = "http://localhost:8080/agente";
+
+    function hideLoader() {
+        document.getElementById("loading").style.display = "none";
+    }
+
+    async function show(usuarios, url) {
+    console.log(usuarios)
+        let tab = `<thead>
+                        <th scope="col">#</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">CPF</th>
+                        <th scope="col">RG</th>
+                        <th scope="col">Delete</th>
+                        <th scope="col">Editar</th>
+                    </thead>`;
+
+        for (let usuario of usuarios) {
+            tab += `
+                <tr>
+                    <td scope="row">${usuario.id}</td>
+                    <td>${usuario.nome}</td>
+                    <td>${usuario.cpf}</td>
+                    <td>${usuario.registroGeral}</td>
+                    <td><button class="btn btn-danger" id="${usuario.id}" onclick="deleteClient(${usuario.id}, '${url}')">Delete</button> </td>
+                    <td>
+                     <button class="btn btn-warning" id="${usuario.id}" data-bs-toggle="modal" data-bs-target="#editModalCliente" onclick="editarClient(${usuario.id}, '${url}')">Editar</button>
+
+                    </td>
+                </tr>
+            `;
+        }
+
+        document.getElementById(url === url2 ? "agentes" : "usuarios").innerHTML = tab;
+    }
+
+    async function show2(agentes) {
+        let tab = `<thead>
+                        <th scope="col">#</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">tipo Agente</th>
+                        <th scope="col">Delete</th>
+                        <th scope="col">Editar</th>
+                    </thead>`;
+
+        for (let agente of agentes) {
+            tab += `
+                <tr>
+                    <td scope="row">${agente.id}</td>
+                    <td>${agente.nome}</td>
+                    <td>${agente.tipoAgente}</td>
+                    <td><button class="btn btn-danger" id="${agente.id}" onclick="deleteAgent(${agente.id})">Delete</button> </td>
+                    <td><button class="btn btn-warning" id="${agente.id}" data-bs-toggle="modal" data-bs-target="#editModal" onclick="editarAgent(${agente.id})">Editar</button> </td>
+                </tr>
+            `;
+        }
+
+        document.getElementById("agentes").innerHTML = tab;
+    }
+
+    async function deleteClient(id, url) {
+        const response = await fetch(`${url}/${id}`, { method: "DELETE" });
+
+        if (response.ok) {
+            // A solicitação DELETE foi bem-sucedida
+            // Recarregue os dados da API após a exclusão, se necessário
+            getAPI(url);
+        } else {
+            console.error("Erro ao excluir cliente.");
+        }
+    }
+
+    async function deleteAgent(id) {
+        const response = await fetch(`${url2}/${id}`, { method: "DELETE" });
+
+        if (response.ok) {
+            // A solicitação DELETE foi bem-sucedida
+            // Recarregue os dados da API após a exclusão, se necessário
+            getAPI2(url2);
+        } else {
+            console.error("Erro ao excluir agente.");
+        }
+    }
+
+    async function getAPI(url) {
+        const response = await fetch(url, { method: "GET" });
+        const data = await response.json();
+
+        if (response.ok) {
+            hideLoader();
+            show(data, url);
+        } else {
+            console.error("Erro ao buscar dados da API.");
+        }
+    }
+
+    async function getAPI2(url2) {
+        const response = await fetch(url2, { method: "GET" });
+        const data = await response.json();
+
+        if (response.ok) {
+            show2(data);
+        } else {
+            console.error("Erro ao buscar dados da API 2.");
+        }
+    }
+
+    // Chame a função para buscar dados da primeira URL
+    getAPI(url);
+
+    // Chame a função para buscar dados da segunda URL
+    getAPI2(url2);
+
+   async function editarClient(id, url) {
+    // Busque os detalhes do cliente por ID e preencha o modal
+    const response = await fetch(`${url}/${id}`, { method: "GET" });
+    const data = await response.json();
+
+    if (response.ok) {
+        document.getElementById("editClienteId").value = id; // Defina o ID do cliente no input hidden
+        document.getElementById("editClienteName").value = data.nome;
+        document.getElementById("editClienteRG").value = data.registroGeral;
+        document.getElementById("editClienteCPF").value = data.cpf;
+
+        document.getElementById("saveClienteChanges").addEventListener("click", async () => {
+            const novoNome = document.getElementById("editClienteName").value;
+            const novoRG = document.getElementById("editClienteRG").value;
+            const novoCPF = document.getElementById("editClienteCPF").value;
+            const clienteId = document.getElementById("editClienteId").value; // Obtenha o ID do cliente do input hidden
+
+            // Crie a URL com os parâmetros de consulta
+            const urlComParametros = `${url}/${clienteId}?cpf=${novoCPF}&rg=${novoRG}`;
+
+            const putResponse = await fetch(urlComParametros, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                // Envie apenas o novo nome como uma string no corpo da solicitação JSON
+                body: JSON.stringify(novoNome)
+            });
+
+            if (putResponse.ok) {
+                // Feche o modal após o sucesso da atualização
+                $('#editModalCliente').modal('hide');
+                // Atualize os dados da API após a atualização
+                getAPI(url);
+            } else {
+                console.error("Erro ao atualizar cliente.");
+            }
+        });
+
+        // Abra o modal de edição
+        $('#editModalCliente').modal('show');
+    } else {
+        console.error("Erro ao buscar detalhes do cliente.");
+    }
+}
+
+
+
+
+async function teste () {
+                const novoNome = document.getElementById("editClienteName").value;
+                const novoRG = document.getElementById("editClienteRG").value;
+                const novoCPF = document.getElementById("editClienteCPF").value;
+                const clienteId = document.getElementById("editClienteId").value; // Obten> ha o ID do cliente do input hidden
+
+                const putResponse = await fetch(`${url}/${clienteId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ nome: novoNome, registroGeral: novoRG, cpf: novoCPF })
+                });
+
+                if (putResponse.ok) {
+                    // Feche o modal após o sucesso da atualização
+                    $('#editModalCliente').modal('hide');
+                    // Atualize os dados da API após a atualização
+                    getAPI(url);
+                } else {
+                    console.error("Erro ao atualizar cliente.");
+                }
+            }
+async function editarAgent(id) {
+    // Busque os detalhes do agente por ID e preencha o modal
+    const response = await fetch(`${url2}/${id}`, { method: "GET" });
+    const data = await response.json();
+
+    if (response.ok) {
+        document.getElementById("editAgentId").value = id; // Defina o ID do agente no input hidden
+        document.getElementById("editName").value = data.nome;
+        document.getElementById("saveChanges").addEventListener("click", async () => {
+            const novoNome = document.getElementById("editName").value;
+            const agenteId = document.getElementById("editAgentId").value; // Obtenha o ID do agente do input hidden
+            const putResponse = await fetch(`${url2}/${agenteId}`, { // Use o agenteId na solicitação PUT
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: novoNome // Envie o novo nome como uma string
+            });
+
+            if (putResponse.ok) {
+                // Feche o modal após o sucesso da atualização
+                $('#editModal').modal('hide');
+                // Atualize os dados da API após a atualização
+                getAPI2(url2);
+            } else {
+                console.error("Erro ao atualizar agente.");
+            }
+        });
+
+        // Abra o modal de edição
+        $('#editModal').modal('show');
+    } else {
+        console.error("Erro ao buscar detalhes do agente.");
+    }
+}
+
+</script>
+</body>
+</html>
