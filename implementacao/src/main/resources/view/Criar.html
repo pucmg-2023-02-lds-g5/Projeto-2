@@ -1,0 +1,161 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+<div class="col-6">
+    <form class="form-inline" >
+        <div class="form-group">
+            <label for="login">Login:</label>
+            <input type="text" class="form-control" id="login">
+        </div>
+        <div class="form-group">
+            <label for="Nome">Nome:</label>
+            <input type="text" class="form-control" id="Nome">
+        </div>
+        <div class="form-group">
+            <label for="senha">senha:</label>
+            <input type="password" class="form-control" id="senha">
+        </div>
+        <div class="form-group " id="cpf-display">
+            <label for="senha">cpf:</label>
+            <input type="number" class="form-control" id="cpf">
+        </div>
+        <div class="form-group " id="rg-display">
+            <label for="rg">Registro Geral:</label>
+            <input type="text" class="form-control" id="rg">
+        </div>
+        <div>
+            <h4>É um agente?</h4>
+        </div>
+        <label for="sim">Sim</label>
+        <input type="radio" name="simOuNao" id="sim" onclick="mostrarSelect()">
+
+        <label for="nao">Não</label>
+        <input type="radio" name="simOuNao" id="nao" onclick="mostrarSelect()">
+
+        <div id="tipoAgente" style="display: none;">
+            <select class="form-select" aria-label="Default select example" id="selectAgente">>
+                <option selected>Selecione o tipo de usuário</option>
+                <option value="EMPRESA">Empresa</option>
+                <option value="BANCO">Banco</option>
+            </select>
+        </div>
+        <button onclick="handleClick()" class="btn btn-danger mt-3">Submit</button>
+    </form>
+</div>
+
+
+<script>
+  // Função para mostrar ou ocultar o campo select com base na seleção do rádio
+  function mostrarSelect() {
+    var radioSim = document.getElementById("sim");
+    var selectTipoUsuario = document.getElementById("tipoAgente");
+    var cpf = document.getElementById("cpf-display");
+    var rg = document.getElementById("rg-display");
+
+    if (radioSim.checked) {
+      selectTipoUsuario.style.display = "block";
+      rg.style.display="none";
+      cpf.style.display="none";
+
+    } else {
+      selectTipoUsuario.style.display = "none";
+      rg.style.display="block";
+      cpf.style.display="block";
+
+
+    }
+  }
+
+  // Função para lidar com o envio do formulário
+  function handleClick() {
+    // Pega o valor do campo "tipoAgente"
+    var radioSim = document.getElementById("sim");
+
+    const tipoAgente = document.getElementById("selectAgente").value;
+    console.log(tipoAgente);
+
+    // Pega os valores dos outros campos do formulário
+    const login = document.getElementById("login").value;
+    const nome = document.getElementById("Nome").value;
+    const senha = document.getElementById("senha").value;
+    const cpf = document.getElementById("cpf").value;
+    const rg = document.getElementById("rg").value;
+
+    if (radioSim.checked) {
+      const formData = {
+        login: login,
+        nome: nome,
+        senha: senha,
+        tipoAgente: tipoAgente,
+      };
+
+      // Envia a solicitação Fetch para a rota "/agente"
+      fetch('/agente', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Erro na solicitação');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Processa a resposta do servidor, se necessário
+          console.log('Resposta do servidor:', data);
+        })
+        .catch((error) => {
+          console.error('Erro:', error);
+          // Lida com erros de solicitação ou validação aqui
+        });
+    } else {
+      // Se "tipoAgente" não foi preenchido, assume que é um cliente
+      const formData = {
+        login: login,
+        nome: nome,
+        senha: senha,
+        cpf: cpf,
+        registroGeral: rg,
+      };
+
+      // Envia a solicitação Fetch para a rota "/cliente"
+      fetch('/cliente', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Erro na solicitação');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Processa a resposta do servidor, se necessário
+          console.log('Resposta do servidor:', data);
+        })
+        .catch((error) => {
+          console.error('Erro:', error);
+          // Lida com erros de solicitação ou validação aqui
+        });
+    }
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
