@@ -2,8 +2,10 @@ package com.projeto2.app.controllers;
 
 import com.projeto2.app.models.Agente;
 import com.projeto2.app.models.Cliente;
+import com.projeto2.app.models.StatusAluguel;
 import com.projeto2.app.models.Usuario;
 import com.projeto2.app.services.AgenteService;
+import com.projeto2.app.services.PedidoAluguelService;
 import com.projeto2.app.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/agente")
@@ -23,6 +26,9 @@ public class AgenteController {
 
     @Autowired
     private AgenteService agenteService;
+
+    @Autowired
+    private PedidoAluguelService pedidoAluguelService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Agente> findById(@PathVariable Long id){
@@ -72,6 +78,15 @@ public class AgenteController {
     public ResponseEntity<List<Agente>> findAll() {
         List<Agente> Agente = agenteService.findAll();
         return ResponseEntity.ok(Agente);
+    }
+
+    @PutMapping("/avaliar/{id}")
+    public ResponseEntity<Void> avaliarAluguel(@RequestBody Map<String,Object> request,@PathVariable Long id){
+        String modificarStatus = String.valueOf(request.get("statusAluguel").toString());
+        StatusAluguel status = StatusAluguel.fromDescription(modificarStatus);
+        pedidoAluguelService.modificarStatus(status,id);
+        return ResponseEntity.ok().build();
+
     }
 
 

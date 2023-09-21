@@ -40,12 +40,10 @@ public class Cliente extends Usuario{
     @NotNull
     private String cpf;
 
-//
-//    @OneToOne
-//    @JoinColumn(name = "endereco_id")
-////    @NotEmpty
-////    @NotNull
-//    private Endereco endereco;
+    @Column(name="endereco",length = 255,nullable = false,unique = true)
+    @NotEmpty
+    @NotNull
+    private String endereco;
 
     @OneToMany(mappedBy = "cliente")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

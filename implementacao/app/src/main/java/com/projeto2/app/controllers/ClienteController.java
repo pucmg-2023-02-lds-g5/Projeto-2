@@ -1,10 +1,7 @@
 package com.projeto2.app.controllers;
 
-import com.projeto2.app.models.Agente;
-import com.projeto2.app.models.Cliente;
-import com.projeto2.app.models.Usuario;
-import com.projeto2.app.services.ClienteService;
-import com.projeto2.app.services.UserService;
+import com.projeto2.app.models.*;
+import com.projeto2.app.services.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +11,22 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cliente")
 @Validated
 public class ClienteController {
     @Autowired
-    private UserService userService;
+    private ClienteService clienteService;
+    @Autowired
+    private AutomovelService automovelService;
 
     @Autowired
-    private ClienteService clienteService;
+    private AgenteService agenteService;
 
+    @Autowired
+    private PedidoAluguelService pedidoAluguelService;
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> findById(@PathVariable Long id){
         Cliente obj = (Cliente)this.clienteService.findById(id);
@@ -79,4 +81,29 @@ public class ClienteController {
         List<Cliente> clientes = clienteService.findAll();
         return ResponseEntity.ok(clientes);
     }
+
+    //aluguel
+    @PostMapping("/pedido")
+    public ResponseEntity<PedidoAluguel> introduzirAluguel(@RequestBody Map<String, Object> request) {
+        String placa = String.valueOf(request.get("placa").toString());
+        Long clienteId = Long.valueOf(request.get("clienteId").toString());
+        Long fornecedorId = Long.valueOf(request.get("fornecedorId").toString());
+        Automovel automovel = this.automovelService.findByPlaca(placa);
+        PedidoAluguel newObj = new PedidoAluguel();
+        newObj.setAutomovel(automovel);
+        newObj.setStatus(StatusAluguel.Solicitado);
+        newObj.setContratante(this.clienteService.findById(clienteId));
+        newObj.setFornecedor(this.agenteService.findById(fornecedorId));
+        this.pedidoAluguelService.create(newObj);
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newObj.getId()).toUri();
+        return ResponseEntity.created(uri).build();
+    }
+
+    @DeleteMapping("/pedido/{id}")
+    public ResponseEntity<Void> cancelarAluguel(@PathVariable Long id){
+        this.pedidoAluguelService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
