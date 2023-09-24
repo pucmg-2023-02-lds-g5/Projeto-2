@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+</head>
+
+<body>
+<nav class="navbar bg-primary navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/agente">Agente</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Pricing</a>
+                </li>
+            </ul>
+            <div class="ms-auto p-2"> <button id="userInfo" class="btn btn-primary" onclick="logout()">Logout</button></div>
+        </div>
+    </div>
+</nav>
+<div class="container mt-4 p-3">
+    <div class="row">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Cadastrar veiculos</h5>
+                <p class="card-text">Cadastre todos os veiculos por aqui</p>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    Launch demo modal
+                </button>
+            </div>
+        </div>
+
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Avaliar pedidos</h5>
+                <p class="card-text">Avalie todos os pedidos por aqui</p>
+                <a href="/agente/verpedidos" class="btn btn-primary">Pedidos</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<h1>Seja bem vindo <span id="nomeUsuario"></span></h1>
+<input type="hidden" id="idUsuario">
+</h1>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cadastrar novo veiculo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="marca">Marca</label>
+                <input id="marca" class="form-control" type="text" placeholder="Default input">
+                <label for="modelo">Modelo</label>
+                <input id="modelo" class="form-control" type="text" placeholder="Default input">
+                <label for="placa">Placa</label>
+                <input id="placa" class="form-control" type="text" placeholder="Default input">
+                <label for="ano">Ano</label>
+                <input id="ano" class="form-control" type="number" placeholder="Default input">
+                <label for="disponivel">Disponivel</label>
+                <input id="disponivel" class="form-control" type="text" placeholder="Default input">
+                <label for="imagem">imagem</label>
+                <input id="imagem" class="form-control" type="text" placeholder="Default input">
+                <label for="diaria">Diaria</label>
+                <input id="diaria" class="form-control" type="text" placeholder="Default input">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button onclick="handleClick()" type="button" class="btn btn-primary">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script>
+    function handleClick() {
+      // Obter os valores dos campos de entrada
+      const marca = document.getElementById('marca').value;
+      const modelo = document.getElementById('modelo').value;
+      const placa = document.getElementById('placa').value;
+      const ano = document.getElementById('ano').value;
+      const disponivel = document.getElementById('disponivel').value;
+      const imagem = document.getElementById('imagem').value;
+      const diaria = document.getElementById('diaria').value;
+      const agenteId = document.getElementById('idUsuario').value;
+
+      // Criar um objeto com os dados a serem enviados no corpo da solicitação
+      const dados = {
+        marca: marca,
+        modelo: modelo,
+        placa: placa,
+        ano: ano,
+        disponivel: disponivel,
+        imagem: imagem,
+        diaria: diaria,
+        agenteId: agenteId
+      };
+
+      // Configurar a opção para a solicitação Fetch
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dados),
+      };
+
+      fetch('/agente/automovel', requestOptions)
+        .then((response) => {
+          if (!response.ok) {
+            alert("Erro ao registrar automovel")
+          }
+          else {
+            alert("Automovel registrado com sucesso")
+          }
+
+        })
+
+    }
+
+    function logout() {
+      document.cookie = "authtoken=;";
+      window.location.href = "/login";
+
+    }
+
+
+  </script>
+
+<script>
+
+    function parseJwt(token) {
+      var base64Url = token.split('.')[1];
+      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    window.addEventListener('load', function () {
+      const tokenCookie = document.cookie
+
+      if (tokenCookie) {
+        const decodedToken = parseJwt(tokenCookie);
+
+        // Agora você pode acessar os claims do token
+        const nomeUsuario = decodedToken.nome;
+        const idUsuario = decodedToken.id;
+        const idhtml = document.getElementById("idUsuario").value = idUsuario
+        const nomehtml = document.getElementById("nomeUsuario").innerText = nomeUsuario
+
+
+
+      }
+    });
+  </script>
+
+</body>
+
+</html>

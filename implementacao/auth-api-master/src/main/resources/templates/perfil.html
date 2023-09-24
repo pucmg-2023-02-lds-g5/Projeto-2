@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cliente</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+</head>
+
+<body>
+<nav class="navbar bg-primary navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Cliente</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Pricing</a>
+        </li>
+      </ul>
+      <div class="ms-auto p-2"> <button id="userInfo" class="btn btn-primary" onclick="logout()">Logout</button></div>
+    </div>
+  </div>
+</nav>
+<div class="container mt-4 p-3">
+  <div class="row">
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Adicionar profissao</h5>
+        <p class="card-text">Adicionar profissoes</p>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+          Profissoes
+        </button>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Ver pedidos</h5>
+        <p class="card-text">Ver todos os pedidos</p>
+        <a href="/cliente/verpedidos" class="btn btn-primary">Pedidos</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<h1>Seja bem vindo <span id="nomeUsuario"></span></h1>
+<input type="hidden" id="idUsuario">
+</h1>
+
+<div class="d-flex justify-content-center">
+  <div class="spinner-border" role="status" id="loading">
+  </div>
+</div>
+<h1 class="text-align-center m-3">Profissoes cadastradas</h1>
+<table id="table" class="table table-hover">
+  <tbody id="profissoes"></tbody>
+</table>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Cadastrar novo veiculo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label for="empregador">empregador</label>
+        <input id="empregador" class="form-control" type="text" placeholder="Default input">
+        <label for="nome">nome</label>
+        <input id="nome" class="form-control" type="text" placeholder="Default input">
+        <label for="salario">salario</label>
+        <input id="salario" class="form-control" type="number" placeholder="Default input">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button onclick="handleClick()" type="button" class="btn btn-primary">Cadastrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ditModal">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editProfissaoId">
+        <input class="form-control" type="text" id="editEmpregador">
+        <input class="form-control" type="text" id="editSalario">
+        <input class="form-control" type="text" id="editNome">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button onclick="salvarEdicao()" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script>
+
+
+function salvarEdicao() {
+  // Obtenha os valores dos campos de edição
+  const novoEmpregador = document.getElementById("editEmpregador").value;
+  const novoNome = document.getElementById("editNome").value;
+  const novoSalario = parseFloat(document.getElementById("editSalario").value);
+  const editProfissaoId = document.getElementById("editProfissaoId").value
+
+
+
+  // Crie um objeto com os novos dados
+  const dadosAtualizados = {
+    empregador: novoEmpregador,
+    nome: novoNome,
+    salario: novoSalario
+  };
+
+  // Enviar a solicitação de atualização para a rota /cliente/profissao/{id}
+  fetch(`/cliente/profissao/${editProfissaoId}`, {
+    method: "PUT", // Use o método PUT para atualizar os dados
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dadosAtualizados), // Converte os dados em JSON
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Erro na solicitação.");
+      }else{
+      alert("Profissão atualizada com sucesso");
+      }
+      // Feche o modal após a atualização bem-sucedida
+      $('#editModalCliente').modal('hide');
+    })
+    .catch((error) => {
+      console.error("Erro ao atualizar profissão:", error);
+    });
+}
+
+
+function hideLoader() {
+        document.getElementById("loading").style.display = "none";
+    }
+    function parseJwt(token) {
+      var base64Url = token.split('.')[1];
+      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    window.addEventListener('load', function () {
+      const tokenCookie = document.cookie
+
+      if (tokenCookie) {
+        const decodedToken = parseJwt(tokenCookie);
+
+        // Agora você pode acessar os claims do token
+        const nomeUsuario = decodedToken.nome;
+        const idUsuario = decodedToken.id;
+        const idhtml = document.getElementById("idUsuario").value = idUsuario
+        const nomehtml = document.getElementById("nomeUsuario").innerText = nomeUsuario
+
+
+      }
+    });
+
+    function handleClick() {
+      // Obtenha os valores dos campos de entrada
+      const empregador = document.getElementById("empregador").value;
+      const nome = document.getElementById("nome").value;
+      const salario = parseFloat(document.getElementById("salario").value);
+      const idUsuario = localStorage.getItem("idUsuario")
+
+      // Crie um objeto com os dados
+      const profissaoData = {
+        empregador:empregador,
+        nome:nome,
+        salario:salario,
+        userId:idUsuario
+      };
+
+      // Enviar a solicitação de fetch para a rota /cliente/profissao
+      fetch("/cliente/profissao", {
+        method: "POST", // Use o método correto (GET, POST, etc.) aqui, se necessário
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(profissaoData), // Converte os dados em JSON
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Erro na solicitação.");
+          }
+          alert("Profissao cadastrada com sucesso")
+        })
+        .then((data) => {
+          // Manipule a resposta do servidor, se necessário
+          console.log("Profissão cadastrada com sucesso:", data);
+
+          // Feche o modal após o cadastro
+          $('#exampleModal').modal('hide');
+        })
+        .catch((error) => {
+          console.error("Erro ao cadastrar profissão:", error);
+        });
+    }
+
+    async function show(profissoes) {
+
+      const idUsuario = localStorage.getItem("idUsuario").trim();
+  let tab = `<thead>
+                <th scope="col">#</th>
+                <th scope="col">empregador</th>
+                <th scope="col">salario</th>
+                <th scope="col">nome</th>
+                <th scope="col">Delete</th>
+                <th scope="col">Editar</th>
+            </thead>`;
+        let contador = 0;
+
+  for (let profissao of profissoes) {
+        const pro = profissao.user_id.trim()
+        if(pro === idUsuario){
+        contador ++;
+        tab += `
+            <tr>
+                <td scope="row">${profissao.id}</td>
+                <td>${profissao.empregador}</td>
+                <td>${profissao.salario}</td>
+                <td>${profissao.nome}</td>
+                <td><button class="btn btn-danger" id="${profissao.id}" onclick="deleteProfissao(${profissao.id})">Delete</button> </td>
+                <td>
+                 <!-- Button trigger modal -->
+                  <button onclick="editarClient(${profissao.id})" type="button" class="btn btn-warning" data-toggle="modal" data-target="#editModal">
+                    Editar
+                  </button>
+                </td>
+            </tr>
+        `;
+  }
+        }
+        if(contador >=3){
+          document.getElementById("table").style.display = "none";
+        }
+
+
+  // Adicione a tabela gerada ao elemento com o ID "profissoes"
+  document.getElementById("profissoes").innerHTML = tab;
+}
+
+
+
+    getAPI("/cliente/profissoes")
+
+    async function getAPI(url) {
+      const response = await fetch(url, { method: "GET" });
+      const data = await response.json();
+
+      if (response.ok) {
+        hideLoader();
+        show(data);
+      } else {
+        console.error("Erro ao buscar dados da API.");
+      }
+    }
+
+    function deleteProfissao(id) {
+  fetch(`/cliente/profissao/${id}`, {
+    method: "DELETE",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Erro na solicitação.");
+      }
+      alert("Profissão excluída com sucesso");
+      // Após a exclusão bem-sucedida, você pode recarregar a tabela ou atualizar os dados da tabela
+      getAPI("/cliente/profissao"); // Recarregue os dados da tabela após a exclusão
+    })
+    .catch((error) => {
+      console.error("Erro ao excluir profissão:", error);
+    });
+}
+
+function editarClient(profissaoId) {
+console.log(profissaoId)
+  // Fazer uma solicitação Fetch para obter os detalhes da profissão com base no ID
+  fetch(`/cliente/profissaoEspecifica/${profissaoId}`, {
+    method: "GET",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Erro na solicitação.");
+      }
+      return response.json();
+    })
+    .then((profissao) => {
+      // Verifique se a resposta contém os detalhes da profissão
+      if (profissao) {
+
+
+        // Preencha os campos do modal de edição com os valores da profissão
+        document.getElementById("editProfissaoId").value = profissao.id;
+        document.getElementById("editEmpregador").value = profissao.empregador;
+        document.getElementById("editNome").value = profissao.nome;
+        document.getElementById("editSalario").value = profissao.salario;
+
+        // Abra o modal de edição
+        const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+        editModal.show();
+      } else {
+        alert("Profissão não encontrada.");
+      }
+    })
+    .catch((error) => {
+      console.error("Erro ao obter detalhes da profissão:", error);
+    });
+}
+function logout() {
+      document.cookie = "authtoken=;";
+      window.location.href = "/login";
+    }
+
+  </script>
+
+</body>
+
+</html>
