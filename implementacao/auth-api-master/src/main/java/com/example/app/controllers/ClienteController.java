@@ -8,7 +8,6 @@ import com.example.app.models.pedidoAluguel.PedidoAluguel;
 import com.example.app.models.pedidoAluguel.StatusAluguel;
 import com.example.app.models.profissao.Profissao;
 import com.example.app.models.user.User;
-import com.example.app.repositories.PedidoAluguelRepository;
 import com.example.app.repositories.UserRepository;
 import com.example.app.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +41,6 @@ public class ClienteController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private PedidoAluguelRepository pedidoAluguelRepository;
 
     @GetMapping
     public ResponseEntity<List<Cliente>> findAll() {
@@ -194,33 +191,6 @@ public class ClienteController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/editarPedido")
-    public ResponseEntity<PedidoAluguel> editarPedido(@PathVariable Long id, @RequestBody Map<String, Object> request){
-         try {
-        Optional<PedidoAluguel> pedidoOptional = pedidoAluguelRepository.findById(id);
-        
-        if (pedidoOptional.isPresent()) {
-            PedidoAluguel pedido = pedidoOptional.get();
-        
-            if (request.containsKey("statusAluguel")) {
-                pedido.setStatus(StatusAluguel.valueOf((String) request.get("statusAluguel")));
-            }
-            if (request.containsKey("dataInicio")) {
-                pedido.setDataInicio((String) request.get("dataInicio"));
-            }
-            if (request.containsKey("dataTermino")) {
-                pedido.setDataTermino((String) request.get("dataTermino"));
-            }
-            pedidoAluguelRepository.save(pedido);
-            
-            return ResponseEntity.ok(pedido);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-    }
+   
 
 }
