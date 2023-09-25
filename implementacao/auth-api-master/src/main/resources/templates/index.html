@@ -183,9 +183,6 @@
 
         });
     })
-      .catch((error) => {
-        console.error("Erro:", error);
-      });
 
     function logout() {
       document.cookie = "authtoken=;";
@@ -258,24 +255,14 @@ console.log("dataDevolucao:", dataDevolucao);
           "Content-Type": "application/json",
         },
         body: JSON.stringify(pedidoData),
+      }).then((response)=>{
+        if (response.ok){
+          alert("Pedido enviado com sucesso")
+        }else{
+          alert("erro ao cadastrar pedido")
+        }
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Erro na solicitação.");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          // Manipular a resposta do servidor, se necessário
-          alert("Pedido enviado com sucesso:");
-
-          // Fechar o modal após o envio do pedido
-          $('#exampleModalCenter').modal('hide');
-        })
-        .catch((error) => {
-          console.error("Erro ao enviar o pedido:", error);
-        });
-    }
+      }
 
 
   </script>
